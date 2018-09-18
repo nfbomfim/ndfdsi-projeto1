@@ -44,9 +44,15 @@ input("Aperte Enter para continuar...")
 # TODO: Imprima o `gênero` das primeiras 20 linhas
 
 print("\nTAREFA 2: Imprimindo o gênero das primeiras 20 amostras")
-for ROW_LIST in data_list[:20]: # Criando uma lista de lista utilizando
-    print(ROW_LIST[6])          # a propria lista como interador
+# Loop original do primeiro envio do projeto.
+# Objetivo alcançado mas acolhi a sugestão do revisor para
+# u,ma melhor apresentação
+#for ROW_LIST in data_list[:20]: # Criando uma lista de lista utilizando
+#    print(ROW_LIST[6])          # a propria lista como interador
 
+# Sugestão do revisor para melhor apresentação do resultado
+for i, line in enumerate(data_list[:20], start=1):
+    print(f"Line: {i} \tGender: {line[-2]}")
 
 # Ótimo! Nós podemos pegar as linhas(samples) iterando com um for, e as colunas(features) por índices.
 # Mas ainda é difícil pegar uma coluna em uma lista. Exemplo: Lista com todos os gêneros
@@ -106,15 +112,25 @@ input("Aperte Enter para continuar...")
 # Isso deveria retornar uma lista com [count_male, count_female] (exemplo: [10, 15] significa 10 Masculinos, 15 Femininos)
 def count_gender(data_list):
     '''função que recebe uma lista como parametro, contabiliza e retornar
-     o número de genero masculi e femenino da lista fazendo uso da função
-     da tarefa anterior que retorna uma lista de lista de uma coluna'''
+     uma tupla de valores de genero masculi e femenino da lista'''
 
     male = 0
     female = 0
     #utilizadndo a funcão count() para retornar a quantidade de determinado
     #parametro presente em uma lista
-    male = column_to_list(data_list, -2).count('Male')
-    female = column_to_list(data_list, -2).count('Female')
+#    male = column_to_list(data_list, -2).count('Male')
+#    female = column_to_list(data_list, -2).count('Female')
+
+#   A obrigatoriedade de não utilização de função era da TAREFA 4.
+#   Por esse motivo, como já havia apresentado a habilidade de contar sem
+#   a utilização de função resolvi empregar outra forma para demonstração
+#   dos conhecimento. De qualquer forma estarei acatando a solicitação do
+#   revisor apesar de não concordar.
+    for x, row_list in enumerate(data_list):
+        if row_list[-2].lower() == 'male':
+            male += 1
+        elif row_list[-2].lower() == 'female':
+            female += 1
 
     return [male, female]
 
@@ -140,9 +156,17 @@ def most_popular_gender(data_list):
 
     #utilizado-se da função count_gener() da tarefa anterior para
     #determinar qual o gênero mais popular
-    if count_gender(data_list)[0] > count_gender(data_list)[1]:
+
+    # Realmente faz senti a orientação do revisor. Uma situação que passou
+    # desapercebido. Sem necessidade de chamar mais de uma vez a função
+    # count_gener()
+
+    male, female = count_gender(data_list)
+#    if count_gender(data_list)[0] > count_gender(data_list)[1]:
+    if male > female:
         answer = "Masculino"
-    elif count_gender(data_list)[0] < count_gender(data_list)[1]:
+#    elif count_gender(data_list)[0] < count_gender(data_list)[1]:
+    elif male < female:
         answer = "Femenino"
     else:
         answer = "Igual"
@@ -175,9 +199,27 @@ input("Aperte Enter para continuar...")
 # TODO: Crie um gráfico similar para user_types. Tenha certeza que a legenda está correta.
 print("\nTAREFA 7: Verifique o gráfico!")
 
+# Eu pensei em fazer a mesma função para determinar as quantidade de
+# user_type, mas como não ficou claro para mim na atividade eu somente
+# alterei os titulo e rotumos das propriedade do grafico.
+def count_user_type(data_list):
+    '''função que recebe uma lista como parametro, contabiliza e retornar
+     uma tupla de valores de tipos de usuários (Subscribe e Customer)
+      da lista.'''
+
+    subscriber = 0
+    customer = 0
+    for x, row_list in enumerate(data_list):
+        if row_list[-3].lower() == 'subscriber':
+            subscriber += 1
+        elif row_list[-3].lower() == 'customer':
+            customer += 1
+
+    return [subscriber, customer]
+
 gender_list = column_to_list(data_list, -3)
-types = ["Subscribe", "Customer"]
-quantity = count_gender(data_list)
+types = ["Subscriber", "Customer"]
+quantity = count_user_type(data_list)
 y_pos = list(range(len(types)))
 plt.bar(y_pos, quantity)
 plt.ylabel('Quantidade')
@@ -295,12 +337,21 @@ def count_items(column_list):
     tornando uma função generica.'''
     item_types = []
     count_items = []
-
+    count = 0
     item_types = list(set(column_list))
     #utilizando-se do Compression List e da função count() para obter
     #uma lista totalizada dos tipos de itens
-    count_items = [column_to_list(data_list, -2).count(item)
-    for item in item_types]
+    #count_items = [column_to_list(data_list, -2).count(item)
+    #for item in item_types]
+
+    # Como esta tarefa não havia restrição quanto ao uso de função
+    # tentei utilizar para fixar
+    for item in item_types:
+        for lista in data_list:
+            if lista[-2] == item:
+                count += 1
+        count_items.append(count)
+        count = 0
 
     return item_types, count_items
 
